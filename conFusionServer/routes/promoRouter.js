@@ -42,7 +42,7 @@ promoRouter.route('/')
     .catch((err) => next(err));    
 });
 
-promotionRouter.route('/:promotionId')
+promoRouter.route('/:promotionId')
 .get((req,res,next) => {
     Promotions.findById(req.params.promotionId)
     .then((promotion) => {
