@@ -3,13 +3,14 @@ const bodyParser = require('body-parser');
 const User = require('../models/user');
 const passport = require('passport');
 var authenticate = require('../authenticate');
+const cors = require('./cors');
 
 
 const router = express.Router();
 router.use(bodyParser.json());
 
 router.route('/')
-    .get(authenticate.verifyUser, authenticate.verifyAdmin, (req,res,next) => {
+    .get(cors.corsWithOptions, authenticate.verifyUser, authenticate.verifyAdmin, (req,res,next) => {
         User.find({})
             .then((users) => {
                 res.statusCode = 200;
@@ -20,7 +21,7 @@ router.route('/')
     });
 
 router.route('/signup')
-    .post( (req, res, next) => {
+    .post(cors.corsWithOptions, (req, res, next) => {
     User.register(new User({username: req.body.username}),
         req.body.password, (err, user) => {
             if(err) {
@@ -51,7 +52,7 @@ router.route('/signup')
 });
 
 router.route('/login')
-    .post(passport.authenticate('local'), (req, res) => {
+    .post(cors.corsWithOptions, passport.authenticate('local'), (req, res) => {
 
     var token = authenticate.getToken({_id: req.user._id});
     res.statusCode = 200;
@@ -60,7 +61,7 @@ router.route('/login')
 });
 
 router.route('/logout')
-    .get( (req, res) => {
+    .get(cors.corsWithOptions, (req, res) => {
   if (req.session) {
     req.session.destroy();
     res.clearCookie('session-id');
